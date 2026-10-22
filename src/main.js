@@ -102,10 +102,16 @@
   }
 
   // Where the big image sits: as large as fits, with a small margin, centred
+  // Pop-up size limits (share of the screen). Phones use nearly all of it.
+  var MAX_W_DESKTOP = 0.72, MAX_H_DESKTOP = 0.86;
+
   function targetRect(img) {
-    var pad = window.innerWidth < 760 ? 12 : 32;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var phone = vw < 760;
+    var maxW = phone ? vw - 24 : vw * MAX_W_DESKTOP;
+    var maxH = phone ? vh - 24 : vh * MAX_H_DESKTOP;
     var r = ratioOf(img);
-    var s = Math.min((window.innerWidth - pad * 2) / r.w, (window.innerHeight - pad * 2) / r.h);
+    var s = Math.min(maxW / r.w, maxH / r.h);
     var w = r.w * s, h = r.h * s;
     return { left: (window.innerWidth - w) / 2, top: (window.innerHeight - h) / 2, width: w, height: h };
   }
