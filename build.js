@@ -8,9 +8,14 @@ const sharp = require('sharp');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'dist');
-const MAX_WIDTH = 1032;  // 3× the 344px card in the design — sharp on retina screens
-const FULL_WIDTH = 2400; // pop-up (lightbox) version
+// Every image is published in several widths; each browser picks the one it needs
+// (cards on a phone ≈ 700px, cards on a retina laptop ≈ 1050px, pop-up on a big retina screen ≈ 2800px).
+const WIDTHS = [800, 1200, 1600, 2200, 2800];
+const WEBP = { quality: 90, smartSubsample: true, effort: 5 }; // keeps small UI text crisp
 const VERSION = Date.now().toString(36);
+const crypto = require('crypto');
+// How wide a card is at each layout (matches styles.css): phone 1 col, tablet 2 cols, desktop 3 cols
+const CARD_SIZES = '(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) calc((100vw - 112px) / 3), calc((min(100vw, 1920px) - 136px) / 4)';
 
 const esc = (s) => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -44,34 +49,36 @@ async function processImage(publicPath) {
     fs.copyFileSync(srcFile, path.join(OUT, 'images', outName));
     let width = 1032, height = 774;
     if (ext === '.gif') ({ width, height } = await sharp(srcFile).metadata());
-    return { src: '/images/' + outName, full: '/images/' + outName, width, height };
+    return { src: '/images/' + outName, srcset: '', full: '/images/' + outName, width, height };
   }
 
   const meta = await sharp(srcFile, { failOn: 'none' }).metadata();
-  // Figma PNGs usually carry an alpha channel even when nothing is transparent
-  const transparent = meta.hasAlpha && !(await sharp(srcFile).stats()).isOpaque;
-  const fmt = transparent ? '.webp' : '.jpg';
+  const rotated = meta.orientation >= 5;
+  const srcW = (rotated ? meta.height : meta.width) || 0;
+  const srcH = (rotated ? meta.width : meta.height) || 0;
 
-  const render = (width, outName) => {
-    const pipeline = sharp(srcFile, { failOn: 'none' })
+  // Fingerprint the file so a replaced image always gets a new URL (no stale caches)
+  const hash = crypto.createHash('sha1').update(fs.readFileSync(srcFile)).digest('hex').slice(0, 8);
+
+  // Widths to publish: the standard steps below the original, plus the original width itself
+  const widths = WIDTHS.filter((w) => w < srcW);
+  if (srcW <= WIDTHS[WIDTHS.length - 1] || !widths.length) widths.push(Math.min(srcW, WIDTHS[WIDTHS.length - 1]));
+
+  const variants = [];
+  for (const w of widths) {
+    const outName = `${base}-${hash}-${w}.webp`;
+    await sharp(srcFile, { failOn: 'none' })
       .rotate() // respect phone photo orientation
-      .resize({ width, withoutEnlargement: true });
-    const file = path.join(OUT, 'images', outName);
-    return transparent
-      ? pipeline.webp({ quality: 85 }).toFile(file)
-      : pipeline.jpeg({ quality: 82, progressive: true, mozjpeg: true }).toFile(file);
-  };
-
-  // Card-size image for the grid…
-  const info = await render(MAX_WIDTH, base + fmt);
-  // …and a bigger one for the pop-up, only when the original is larger than the card size
-  let full = '/images/' + base + fmt;
-  const origWidth = (meta.orientation >= 5 ? meta.height : meta.width) || 0;
-  if (origWidth > MAX_WIDTH) {
-    await render(FULL_WIDTH, base + '-full' + fmt);
-    full = '/images/' + base + '-full' + fmt;
+      .resize({ width: w, withoutEnlargement: true, kernel: 'lanczos3' })
+      .webp(WEBP)
+      .toFile(path.join(OUT, 'images', outName));
+    variants.push({ w, url: '/images/' + outName });
   }
-  return { src: '/images/' + base + fmt, full, width: info.width, height: info.height };
+
+  const srcset = variants.map((v) => `${v.url} ${v.w}w`).join(', ');
+  const fallback = (variants.find((v) => v.w >= 1200) || variants[variants.length - 1]).url;
+  const largest = variants[variants.length - 1].url;
+  return { src: fallback, srcset, full: largest, width: srcW, height: srcH };
 }
 
 async function build() {
@@ -94,7 +101,7 @@ async function build() {
     cards.push(
       `      <article class="item" data-col="${col}">` +
       `<a class="item__open" href="${img.full}" aria-label="Open ${esc(p.title)} full size">` +
-      `<img src="${img.src}" data-full="${img.full}" width="${img.width}" height="${img.height}" alt="${esc(p.title)}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">` +
+      `<img src="${img.src}"${img.srcset ? ` srcset="${img.srcset}" sizes="${CARD_SIZES}"` : ''} width="${img.width}" height="${img.height}" alt="${esc(p.title)}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">` +
       `</a>` +
       `<div class="cap"><h2>${esc(p.title)}</h2>${p.subtitle ? `<p>${esc(p.subtitle)}</p>` : ''}</div></article>`
     );

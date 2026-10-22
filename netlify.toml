@@ -11,8 +11,8 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Images can be replaced under the same name from the CMS: cache for a day
+# Published image names include a fingerprint of the file, so they can be cached forever
 [[headers]]
   for = "/images/*"
   [headers.values]
-    Cache-Control = "public, max-age=86400"
+    Cache-Control = "public, max-age=31536000, immutable"

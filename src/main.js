@@ -130,18 +130,22 @@
     return ms;
   }
 
-  function loadFull(link) {
+  // Show the card's image straight away, then swap in the size that is sharp
+  // at the pop-up's width on this screen (the browser picks it from srcset).
+  function loadFull(link, t) {
     var thumb = thumbOf(link);
-    var full = thumb.getAttribute('data-full');
+    big.removeAttribute('srcset');
     big.src = thumb.currentSrc || thumb.src; // already loaded — shows instantly
     big.alt = thumb.alt;
-    if (full && full !== thumb.getAttribute('src')) {
-      var hi = new Image();
-      hi.src = full;
-      (hi.decode ? hi.decode() : Promise.resolve()).then(function () {
-        if (current === link) big.src = full;
-      }).catch(function () {});
-    }
+    var srcset = thumb.getAttribute('srcset');
+    if (!srcset) return;
+    var hi = new Image();
+    hi.sizes = Math.ceil(t.width) + 'px';
+    hi.srcset = srcset;
+    hi.src = thumb.getAttribute('src');
+    (hi.decode ? hi.decode() : Promise.resolve()).then(function () {
+      if (current === link && hi.currentSrc && hi.currentSrc !== big.src) big.src = hi.currentSrc;
+    }).catch(function () {});
   }
 
   function lockScroll(on) {
@@ -164,7 +168,7 @@
     var card = thumb.getBoundingClientRect();
     var t = targetRect(thumb);
 
-    loadFull(link);
+    loadFull(link, t);
     setTransition(false);
     place(t);
     big.style.opacity = reduceMotion.matches ? '0' : '1';
@@ -223,8 +227,9 @@
       thumb.style.visibility = 'hidden';
       setTransition(false);
       big.style.transform = 'none';
-      place(targetRect(thumb));
-      loadFull(next);
+      var t = targetRect(thumb);
+      place(t);
+      loadFull(next, t);
       void big.offsetWidth;
       big.style.transition = 'opacity 180ms ease';
       big.style.opacity = '1';

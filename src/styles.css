@@ -206,7 +206,7 @@ html.lb-open { overflow: hidden; }
   max-width: none;
   object-fit: contain;
   transform-origin: 0 0;
-  will-change: transform;
+  /* No will-change here: it makes browsers keep drawing the image at card size (blurry) */
   user-select: none;
   -webkit-user-drag: none;
 }
