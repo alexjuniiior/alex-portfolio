@@ -176,3 +176,37 @@ img { display: block; max-width: 100%; height: auto; }
   .intro__text { font-size: 22px; max-width: 30ch; }
   .work { grid-template-columns: 1fr; padding-top: 16px; }
 }
+
+/* ---------- Lightbox ---------- */
+
+.item__open { display: block; cursor: zoom-in; }
+.item__open:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+html.lb-open { overflow: hidden; }
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  cursor: zoom-out;
+  outline: none;
+}
+.lb[hidden] { display: none; }
+
+.lb__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .8);
+  opacity: 0;
+}
+
+.lb__img {
+  position: fixed;
+  display: block;
+  max-width: none;
+  object-fit: contain;
+  transform-origin: 0 0;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+}

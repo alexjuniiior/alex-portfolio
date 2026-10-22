@@ -8,7 +8,8 @@ const sharp = require('sharp');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'dist');
-const MAX_WIDTH = 1032; // 3× the 344px card in the design — sharp on retina screens
+const MAX_WIDTH = 1032;  // 3× the 344px card in the design — sharp on retina screens
+const FULL_WIDTH = 2400; // pop-up (lightbox) version
 const VERSION = Date.now().toString(36);
 
 const esc = (s) => String(s ?? '')
@@ -43,23 +44,34 @@ async function processImage(publicPath) {
     fs.copyFileSync(srcFile, path.join(OUT, 'images', outName));
     let width = 1032, height = 774;
     if (ext === '.gif') ({ width, height } = await sharp(srcFile).metadata());
-    return { src: '/images/' + outName, width, height };
+    return { src: '/images/' + outName, full: '/images/' + outName, width, height };
   }
 
-  const img = sharp(srcFile, { failOn: 'none' }).rotate(); // respect phone photo orientation
-  const meta = await img.metadata();
+  const meta = await sharp(srcFile, { failOn: 'none' }).metadata();
   // Figma PNGs usually carry an alpha channel even when nothing is transparent
   const transparent = meta.hasAlpha && !(await sharp(srcFile).stats()).isOpaque;
-  const resized = img.resize({ width: MAX_WIDTH, withoutEnlargement: true });
-  let outName, info;
-  if (transparent) {
-    outName = base + '.webp';
-    info = await resized.webp({ quality: 85 }).toFile(path.join(OUT, 'images', outName));
-  } else {
-    outName = base + '.jpg';
-    info = await resized.jpeg({ quality: 82, progressive: true, mozjpeg: true }).toFile(path.join(OUT, 'images', outName));
+  const fmt = transparent ? '.webp' : '.jpg';
+
+  const render = (width, outName) => {
+    const pipeline = sharp(srcFile, { failOn: 'none' })
+      .rotate() // respect phone photo orientation
+      .resize({ width, withoutEnlargement: true });
+    const file = path.join(OUT, 'images', outName);
+    return transparent
+      ? pipeline.webp({ quality: 85 }).toFile(file)
+      : pipeline.jpeg({ quality: 82, progressive: true, mozjpeg: true }).toFile(file);
+  };
+
+  // Card-size image for the grid…
+  const info = await render(MAX_WIDTH, base + fmt);
+  // …and a bigger one for the pop-up, only when the original is larger than the card size
+  let full = '/images/' + base + fmt;
+  const origWidth = (meta.orientation >= 5 ? meta.height : meta.width) || 0;
+  if (origWidth > MAX_WIDTH) {
+    await render(FULL_WIDTH, base + '-full' + fmt);
+    full = '/images/' + base + '-full' + fmt;
   }
-  return { src: '/images/' + outName, width: info.width, height: info.height };
+  return { src: '/images/' + base + fmt, full, width: info.width, height: info.height };
 }
 
 async function build() {
@@ -81,7 +93,9 @@ async function build() {
     const eager = perColumn[col]++ < 2; // first two of each column are above the fold
     cards.push(
       `      <article class="item" data-col="${col}">` +
-      `<img src="${img.src}" width="${img.width}" height="${img.height}" alt="${esc(p.title)}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">` +
+      `<a class="item__open" href="${img.full}" aria-label="Open ${esc(p.title)} full size">` +
+      `<img src="${img.src}" data-full="${img.full}" width="${img.width}" height="${img.height}" alt="${esc(p.title)}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">` +
+      `</a>` +
       `<div class="cap"><h2>${esc(p.title)}</h2>${p.subtitle ? `<p>${esc(p.subtitle)}</p>` : ''}</div></article>`
     );
   }
