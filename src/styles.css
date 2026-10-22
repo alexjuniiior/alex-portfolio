@@ -16,6 +16,7 @@
 :root {
   --bg: #000;
   --fg: #e8e4d9;
+  --muted: #5d5b57;     /* project subtext */
   --ink: #030118;
   --placeholder: #111;
   --pad: 32px;
@@ -138,6 +139,7 @@ img { display: block; max-width: 100%; height: auto; }
 .item:hover img { opacity: .85; }
 
 .cap { font-size: 14px; }
+.cap p { color: var(--muted); }
 
 /* ---------- Load-in ---------- */
 
