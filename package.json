@@ -1,0 +1,15 @@
+{
+  "name": "alex-portfolio",
+  "private": true,
+  "description": "Alex Lisovski portfolio — static site with Pages CMS content",
+  "scripts": {
+    "build": "node build.js",
+    "preview": "node build.js && npx --yes serve dist"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "sharp": "^0.34.0"
+  }
+}

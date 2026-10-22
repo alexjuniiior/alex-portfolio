@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{page_title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta property="og:title" content="{{page_title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/PPFormula-SemiExtendedBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css?v={{version}}">
+</head>
+<body>
+  <div class="page">
+    <aside class="intro">
+      <div class="intro__top">
+        <a class="logo" href="/" aria-label="{{name}} — home">
+          <svg width="63" height="34" viewBox="0 0 63 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M17 0.700195C26.0022 0.700199 33.2998 7.99776 33.2998 17C33.2998 26.0022 26.0022 33.2998 17 33.2998C7.99776 33.2998 0.700195 26.0022 0.700195 17C0.700195 7.99776 7.99776 0.700195 17 0.700195Z" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M45.035 0.700195C54.0373 0.700199 61.3348 7.99776 61.3348 17C61.3348 26.0022 54.0373 33.2998 45.035 33.2998C36.0328 33.2998 28.7352 26.0022 28.7352 17C28.7352 7.99776 36.0328 0.700195 45.035 0.700195Z" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M20.8892 21.4737H19.2548L18.5867 19.3502H15.6281L14.972 21.4737H13.3734L16.165 13.1467H18.1215L20.8892 21.4737ZM18.205 18.0022L17.525 15.9025L17.1313 14.5783H17.0717L16.678 15.9025L16.0099 18.0022H18.205Z" fill="currentColor"/>
+            <path d="M46.9916 21.4737H42.1362V13.1467H43.7109V20.078H46.9916V21.4737Z" fill="currentColor"/>
+          </svg>
+        </a>
+        <div class="intro__text">
+          <h1>{{name}}</h1>
+{{intro}}
+        </div>
+      </div>
+
+      <a class="cta" href="{{button_link}}"{{button_target}}>
+        <span>{{button_label}}</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10.5026 5.17493L2.97181 12.7057L1.73438 11.4683L9.26514 3.9375H2.62759V2.1875H12.2526V11.8125H10.5026V5.17493Z" fill="currentColor"/>
+        </svg>
+      </a>
+    </aside>
+
+    <main class="work" aria-label="Selected work">
+{{projects}}
+    </main>
+  </div>
+
+  <script src="/main.js?v={{version}}" defer></script>
+</body>
+</html>

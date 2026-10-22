@@ -1,0 +1,176 @@
+@font-face {
+  font-family: "PP Formula SemiExtended";
+  src: url("fonts/PPFormula-SemiExtendedBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #000;
+  --fg: #e8e4d9;
+  --ink: #030118;
+  --placeholder: #111;
+  --pad: 32px;
+  --gap: 24px;          /* gap between columns */
+  --item-gap: 36px;     /* gap between projects in a column */
+  --font: "PP Formula SemiExtended", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, p { margin: 0; font: inherit; }
+a { color: inherit; }
+img { display: block; max-width: 100%; height: auto; }
+
+::selection { background: var(--fg); color: var(--ink); }
+
+/* ---------- Layout ---------- */
+
+.page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+  gap: var(--gap);
+  padding: 0 var(--pad);
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* ---------- Intro column ---------- */
+
+.intro {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: var(--pad) 0;
+}
+
+.intro__top { display: flex; flex-direction: column; gap: 32px; }
+
+.logo { display: inline-flex; width: max-content; color: var(--fg); }
+.logo svg { display: block; }
+
+.intro__text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-size: 24px;
+  max-width: 344px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  padding: 12px;
+  background: var(--fg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color .2s ease, transform .2s ease;
+}
+.cta svg { transition: transform .2s ease; }
+.cta:hover { background: #fff; }
+.cta:hover svg { transform: translate(2px, -2px); }
+.cta:focus-visible, .logo:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+/* ---------- Work grid ---------- */
+
+.work {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--gap);
+  align-items: start;
+  padding: var(--pad) 0;
+}
+
+.work__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--item-gap);
+}
+
+/* Fallback before JS arranges the columns */
+.work:not(.is-ready) { gap: var(--item-gap) var(--gap); }
+
+.item { display: flex; flex-direction: column; gap: 12px; }
+.item--loose { gap: 24px; }
+
+.item img {
+  width: 100%;
+  background: var(--placeholder);
+  transition: opacity .3s ease;
+}
+.item:hover img { opacity: .85; }
+
+.cap { font-size: 14px; }
+
+/* ---------- Load-in ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .intro__top, .cta, .item {
+    animation: rise .8s cubic-bezier(0, 0, .58, 1) both;
+  }
+  .cta { animation-delay: .15s; }
+  .item { animation-delay: calc(var(--i, 0) * 50ms + 100ms); }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  .page { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+  .work { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .intro__text { font-size: 22px; }
+}
+
+@media (max-width: 760px) {
+  :root { --pad: 20px; --item-gap: 32px; }
+  .page { grid-template-columns: 1fr; gap: 0; }
+  .intro {
+    position: static;
+    height: auto;
+    min-height: 0;
+    gap: 32px;
+    padding-bottom: 16px;
+  }
+  .intro__text { font-size: 22px; max-width: 30ch; }
+  .work { grid-template-columns: 1fr; padding-top: 16px; }
+}

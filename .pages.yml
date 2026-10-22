@@ -1,0 +1,75 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration
+media:
+  input: images
+  output: /images
+  categories: [image]
+
+content:
+  - name: projects
+    label: Projects
+    type: file
+    path: content/projects.json
+    fields:
+      - name: projects
+        label: Projects
+        description: "On desktop each project sits in the column you pick; within a column, the order here is top to bottom. Drag to reorder."
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title} · column {column}"
+        fields:
+          - name: image
+            label: Image
+            description: "Any size is fine (JPG, PNG, WebP or GIF) — it is resized automatically. Export at 344px wide or larger."
+            type: image
+            options:
+              extensions: [jpg, jpeg, png, webp, gif]
+          - name: title
+            label: Heading
+            type: string
+          - name: subtitle
+            label: Subtext
+            description: "e.g. Visual research, 2026"
+            type: string
+          - name: column
+            label: Column (desktop)
+            type: select
+            options:
+              values:
+                - name: "1"
+                  label: Left
+                - name: "2"
+                  label: Middle
+                - name: "3"
+                  label: Right
+
+  - name: site
+    label: Intro & button
+    type: file
+    path: content/site.json
+    fields:
+      - name: name
+        label: Name
+        type: string
+      - name: intro
+        label: Intro paragraphs
+        type: object
+        list: true
+        fields:
+          - name: text
+            label: Paragraph
+            type: text
+      - name: button_label
+        label: Button text
+        type: string
+      - name: button_link
+        label: Button link
+        description: "A Calendly / Cal.com URL, or mailto:you@example.com"
+        type: string
+      - name: page_title
+        label: Browser tab title
+        type: string
+      - name: description
+        label: Search & share description
+        type: text
