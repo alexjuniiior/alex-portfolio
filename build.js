@@ -14,6 +14,9 @@ const WIDTHS = [800, 1200, 1600, 2200, 2800];
 const WEBP = { quality: 90, smartSubsample: true, effort: 5 }; // keeps small UI text crisp
 const VERSION = Date.now().toString(36);
 const crypto = require('crypto');
+const CACHE_DIR = path.join(__dirname, 'node_modules', '.cache', 'portfolio-images');
+const SETTINGS_KEY = crypto.createHash('sha1').update(JSON.stringify(WEBP)).digest('hex').slice(0, 6);
+let cacheHits = 0;
 // How wide a card is at each layout (matches styles.css): phone 1 col, tablet 2 cols, desktop 3 cols
 const CARD_SIZES = '(max-width: 760px) calc(100vw - 40px), (max-width: 1100px) calc((100vw - 112px) / 3), calc((min(100vw, 1920px) - 136px) / 4)';
 
@@ -67,11 +70,20 @@ async function processImage(publicPath) {
   const variants = [];
   for (const w of widths) {
     const outName = `${base}-${hash}-${w}.webp`;
-    await sharp(srcFile, { failOn: 'none' })
-      .rotate() // respect phone photo orientation
-      .resize({ width: w, withoutEnlargement: true, kernel: 'lanczos3' })
-      .webp(WEBP)
-      .toFile(path.join(OUT, 'images', outName));
+    const outFile = path.join(OUT, 'images', outName);
+    // Reuse sizes made by an earlier build (Netlify keeps node_modules between builds)
+    const cached = path.join(CACHE_DIR, `${hash}-${SETTINGS_KEY}-${w}.webp`);
+    if (fs.existsSync(cached)) {
+      fs.copyFileSync(cached, outFile);
+      cacheHits++;
+    } else {
+      await sharp(srcFile, { failOn: 'none' })
+        .rotate() // respect phone photo orientation
+        .resize({ width: w, withoutEnlargement: true, kernel: 'lanczos3' })
+        .webp(WEBP)
+        .toFile(outFile);
+      try { fs.mkdirSync(CACHE_DIR, { recursive: true }); fs.copyFileSync(outFile, cached); } catch (e) { /* cache is optional */ }
+    }
     variants.push({ w, url: '/images/' + outName });
   }
 
@@ -128,7 +140,7 @@ async function build() {
     .replace(/{{version}}/g, VERSION);
 
   fs.writeFileSync(path.join(OUT, 'index.html'), html);
-  console.log(`✓ Built ${cards.length} projects into dist/`);
+  console.log(`✓ Built ${cards.length} projects into dist/ (${cacheHits} image sizes reused from cache)`);
 }
 
 build().catch((err) => { console.error(err); process.exit(1); });
