@@ -1,24 +1,112 @@
 {
   "projects": [
-    { "image": "/images/cnduit.jpg", "title": "Home page CNDUIT", "subtitle": "Visual research, 2026", "column": "1" },
-    { "image": "/images/circle-21.jpg", "title": "Circle 21", "subtitle": "UI Exploration, 2026", "column": "1" },
-    { "image": "/images/formula-1.jpg", "title": "Formula 1", "subtitle": "Brand Expression, 2026", "column": "1" },
-    { "image": "/images/ai-chat.jpg", "title": "AI chat", "subtitle": "UI Exploration, 2026", "column": "1" },
-    { "image": "/images/slow-life.jpg", "title": "Slow life", "subtitle": "Visual research, 2026", "column": "1" },
-    { "image": "/images/starbucks-app.jpg", "title": "Starbucks app", "subtitle": "Interface Design, 2026", "column": "1" },
-
-    { "image": "/images/pitch-deck-thesis.jpg", "title": "Pitch deck thesis", "subtitle": "Visual Identity, 2026", "column": "2" },
-    { "image": "/images/orijins.jpg", "title": "Orijins", "subtitle": "Brand Expression, 2024", "column": "2" },
-    { "image": "/images/photograph-website.jpg", "title": "Photograph website", "subtitle": "Visual Identity, 2026", "column": "2" },
-    { "image": "/images/api-keys.jpg", "title": "API Keys", "subtitle": "Dashboard redesign, 2026", "column": "2" },
-    { "image": "/images/bahrain-circuit.jpg", "title": "Bahrain Circuit", "subtitle": "3D research, 2026", "column": "2" },
-    { "image": "/images/biotech.jpg", "title": "Biotech", "subtitle": "UI Exploration, 2024", "column": "2" },
-
-    { "image": "/images/hltv-redesign.jpg", "title": "HLTV Redesign", "subtitle": "Visual Identity, 2026", "column": "3" },
-    { "image": "/images/event-banner.jpg", "title": "Event Banner", "subtitle": "Visual banner, 2026", "column": "3" },
-    { "image": "/images/hr-product.jpg", "title": "HR Product", "subtitle": "Visual Identity, 2025", "column": "3" },
-    { "image": "/images/formula-1-banner.jpg", "title": "Formula 1 banner", "subtitle": "Visual Identity, 2026", "column": "3" },
-    { "image": "/images/spaceous.jpg", "title": "Spaceous", "subtitle": "Logo exploration, 2024", "column": "3" },
-    { "image": "/images/features-section.jpg", "title": "Features section", "subtitle": "Visual research, 2026", "column": "3" }
+    {
+      "image": "/images/cnduit.jpg",
+      "title": "Home page CNDUIT",
+      "subtitle": "Visual research, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/circle-21.jpg",
+      "title": "Circle 21",
+      "subtitle": "UI Exploration, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/formula-1.jpg",
+      "title": "Formula 1",
+      "subtitle": "Brand Expression, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/ai-chat.jpg",
+      "title": "AI chat",
+      "subtitle": "UI Exploration, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/slow-life.jpg",
+      "title": "Slow life",
+      "subtitle": "Visual research, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/starbucks-app.jpg",
+      "title": "Starbucks app",
+      "subtitle": "Interface Design, 2026",
+      "column": "1"
+    },
+    {
+      "image": "/images/pitch-deck-thesis.jpg",
+      "title": "Pitch deck thesis",
+      "subtitle": "Visual Identity, 2026",
+      "column": "2"
+    },
+    {
+      "image": "/images/orijins.jpg",
+      "title": "Orijins",
+      "subtitle": "Brand Expression, 2024",
+      "column": "2"
+    },
+    {
+      "image": "/images/photograph-website.jpg",
+      "title": "Photograph website",
+      "subtitle": "Visual Identity, 2026",
+      "column": "2"
+    },
+    {
+      "image": "/images/api-keys.jpg",
+      "title": "API Keys",
+      "subtitle": "Dashboard redesign, 2026",
+      "column": "2"
+    },
+    {
+      "image": "/images/bahrain-circuit.jpg",
+      "title": "Bahrain Circuit",
+      "subtitle": "3D research, 2026",
+      "column": "2"
+    },
+    {
+      "image": "/images/biotech.jpg",
+      "title": "Biotech",
+      "subtitle": "UI Exploration, 2024",
+      "column": "2"
+    },
+    {
+      "image": "/images/hltv-redesign.jpg",
+      "title": "HLTV Redesign",
+      "subtitle": "Visual Identity, 2026",
+      "column": "3"
+    },
+    {
+      "image": "/images/event-banner.jpg",
+      "title": "Event Banner",
+      "subtitle": "Visual banner, 2026",
+      "column": "3"
+    },
+    {
+      "image": "/images/hr-product.jpg",
+      "title": "HR Product",
+      "subtitle": "Visual Identity, 2025",
+      "column": "3"
+    },
+    {
+      "image": "/images/formula-1-banner.jpg",
+      "title": "Formula 1 banner",
+      "subtitle": "Visual Identity, 2026",
+      "column": "3"
+    },
+    {
+      "image": "/images/spaceous.jpg",
+      "title": "Spaceous",
+      "subtitle": "Logo exploration, 2024",
+      "column": "3"
+    },
+    {
+      "image": "/images/features-section.jpg",
+      "title": "Features section",
+      "subtitle": "Visual research, 2026",
+      "column": "3"
+    }
   ]
 }
