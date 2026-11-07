@@ -10,4 +10,4 @@ Everything Netlify serves lives in `public/`; there is no build step.
 
 Run locally: `cd public && python3 -m http.server 8000`, then open http://localhost:8000
 
-The previous version of the site (with the Pages CMS editor) is kept under the git tag `v1-site`.
+The previous version of the site (with the Pages CMS editor) is kept on the git branch `v1-site`.
