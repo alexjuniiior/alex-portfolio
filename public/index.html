@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" class="is-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alex Lisovski — Product Designer</title>
+  <meta name="description" content="Design that ships, not design that's handed off.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/PPFormula-SemiExtendedBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/JetBrainsMono-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Hero: trying the video (7 Nov). To go back to the photo, swap these two lines
+       and the two blocks inside .hero__bg below. -->
+  <link rel="preload" as="image" href="images/hero-video-poster.webp">
+  <!-- <link rel="preload" as="image" href="images/hero-mountains-2400.webp" imagesrcset="images/hero-mountains-1600.webp 1600w, images/hero-mountains-2400.webp 2400w, images/hero-mountains-3024.webp 3024w" imagesizes="100vw"> -->
+  <link rel="stylesheet" href="js/vendor/lenis.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Without JavaScript, show everything straight away -->
+  <noscript><style>html.is-loading [data-reveal] { visibility: visible !important; }</style></noscript>
+</head>
+<body>
+
+  <!-- ===================== Header ===================== -->
+  <header class="nav">
+    <div class="mask">
+      <a class="nav__logo" href="/" aria-label="Alex Lisovski — home" data-reveal="nav">
+        <img class="nav__logo-left" src="assets/logo-circle.svg" width="34" height="34" alt="">
+        <img class="nav__logo-right" src="assets/logo-circles.svg" width="48.66" height="34" alt="">
+      </a>
+    </div>
+    <nav class="nav__links" aria-label="Main">
+      <div class="mask">
+        <a class="nav__link" href="#work" data-reveal="nav"><span class="nav__link-text">Projects</span></a>
+      </div>
+      <div class="mask">
+        <a class="nav__link" href="#about" data-reveal="nav"><span class="nav__link-text">About</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===================== Hero ===================== -->
+    <section class="hero" id="home" aria-label="Introduction">
+      <div class="hero__bg" data-reveal="hero-bg" aria-hidden="true">
+        <!-- Video version (looping, muted, no sound track) -->
+        <video class="hero__video" poster="images/hero-video-poster.webp"
+               width="1214" height="758" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
+          <source src="videos/hero-loop.mp4" type="video/mp4">
+          <source src="videos/hero-loop.webm" type="video/webm">
+        </video>
+        <!-- Photo version: to switch back, delete the <video> above and uncomment this
+        <img src="images/hero-mountains-2400.webp"
+             srcset="images/hero-mountains-1600.webp 1600w, images/hero-mountains-2400.webp 2400w, images/hero-mountains-3024.webp 3024w"
+             sizes="100vw" width="3024" height="1800" alt="" fetchpriority="high" decoding="async">
+        -->
+      </div>
+      <div class="hero__content">
+        <h1 class="hero__title" data-reveal="lines">
+          Design that ships, not design that's <s class="hero__strike">handed&nbsp;off.</s>
+        </h1>
+
+        <!-- Scrolls away with the hero; a copy then rises into a fixed spot at
+             the bottom of the screen (made by main.js) -->
+        <div class="mask mask--button" data-cta-source>
+          <a class="button" href="mailto:lisovskialexandr@gmail.com?subject=Intro%20call" data-reveal="button">
+            <span class="button__text-wrap">
+              <span class="button__text">Schedule an intro call</span>
+            </span>
+            <span class="button__aside" aria-hidden="true">
+              <span class="button__aside-bg"></span>
+              <img class="button__arrow" src="assets/arrow.svg" width="17.45" height="17.45" alt="">
+              <img class="button__arrow is-entering" src="assets/arrow.svg" width="17.45" height="17.45" alt="">
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Intro statement + clients ===================== -->
+    <section class="statement" aria-label="What I do">
+      <div class="statement__inner">
+        <div class="statement__text" data-highlight>
+          <p>I help founders ship the product their pitch deck promised.</p>
+          <p class="statement__muted">I design it, prototype it, and sit with the engineers until it's live.</p>
+          <p class="statement__muted">One designer from the pitch to the product your users open every day.</p>
+        </div>
+
+        <div class="logos" aria-label="Clients">
+          <div class="logos__track">
+            <ul class="logos__set">
+              <li><img src="assets/logo-cnduit.svg" width="97" height="14" alt="Cnduit"></li>
+              <li><img src="assets/logo-pacific-machines.svg" width="134.4" height="13.65" alt="Pacific Machines"></li>
+              <li><img src="assets/logo-solaax.svg" width="78" height="14" alt="Solaax"></li>
+              <li><img src="assets/logo-prepaire.svg" width="81" height="22" alt="Prepaire"></li>
+              <li class="logos__clip"><img src="assets/logo-genetiq.svg" width="81" height="25" alt="genetiQ"></li>
+            </ul>
+            <!-- copies for the endless loop are added by main.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Showcase: screen grows on scroll ===================== -->
+    <section class="showcase" aria-label="Selected work">
+      <div class="showcase__stage">
+        <div class="showcase__frame" data-showcase>
+          <!-- Screens swap while the frame grows; the first one is visible without JavaScript -->
+          <img class="showcase__screen is-active" src="images/work-1-1440.webp"
+               srcset="images/work-1-1440.webp 1440w, images/work-1-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="Cnduit website" decoding="async">
+          <img class="showcase__screen" src="images/work-2-1440.webp"
+               srcset="images/work-2-1440.webp 1440w, images/work-2-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="Pacific Machines pitch deck" decoding="async">
+          <img class="showcase__screen" src="images/work-3-1440.webp"
+               srcset="images/work-3-1440.webp 1440w, images/work-3-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="Live entertainment AI concept" decoding="async">
+          <img class="showcase__screen" src="images/work-4-1440.webp"
+               srcset="images/work-4-1440.webp 1440w, images/work-4-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="HLTV redesign" decoding="async">
+          <img class="showcase__screen" src="images/work-5-1440.webp"
+               srcset="images/work-5-1440.webp 1440w, images/work-5-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="Driving assistant app" decoding="async">
+          <img class="showcase__screen" src="images/work-6-1440.webp"
+               srcset="images/work-6-1440.webp 1440w, images/work-6-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+               width="2880" height="1620" alt="Formula 1 event website" decoding="async">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Approach + metrics (light section) ===================== -->
+    <section class="approach" id="values" data-theme="light" aria-label="Approach">
+      <div class="approach__grid">
+        <h2 class="approach__title" data-reveal-lines>
+          Product design is part of engineering now<span class="approach__arrow" aria-hidden="true"><svg viewBox="0 0 18 16" width="18" height="16"><path d="M0.5 8H15.5M9.5 2L15.5 8L9.5 14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="miter"/></svg></span>
+        </h2>
+
+        <div class="approach__text">
+          <p data-reveal-lines>The gap between a screen and a shipped feature used to be someone else's problem.</p>
+          <p data-reveal-lines>With AI tooling, that gap is where most products die: the build is cheap, the decisions are not</p>
+        </div>
+
+        <p class="approach__label" data-reveal-lines>some metrics</p>
+
+        <dl class="metrics">
+          <div class="metric">
+            <dt class="metric__value" data-count="10" data-prefix="$" data-suffix="M">$10M</dt>
+            <dd class="metric__label" data-reveal-lines>raised by founders I've designed for</dd>
+          </div>
+          <div class="metric">
+            <dt class="metric__value" data-count="18">18</dt>
+            <dd class="metric__label" data-reveal-lines>products, brands and launches since 2024</dd>
+          </div>
+          <div class="metric">
+            <dt class="metric__value" data-count="3">3</dt>
+            <dd class="metric__label" data-reveal-lines>rooms I work in: founders, engineers, audiences</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ===================== Featured projects ===================== -->
+    <section class="projects" id="work" aria-label="Featured projects">
+      <div class="projects__inner">
+        <div class="projects__aside">
+          <div class="projects__sticky">
+            <h2 class="projects__title" data-reveal-lines>Featured Projects</h2>
+            <p class="projects__sub" data-reveal-lines>2025 &amp; Present</p>
+          </div>
+        </div>
+
+        <div class="projects__list">
+          <article class="case" data-case>
+            <header class="case__head">
+              <h3 class="case__title" data-reveal-lines>Private work intelligence</h3>
+              <ul class="case__tags" data-reveal-items aria-label="Deliverables">
+                <li class="tag tag--light">Pitch deck</li>
+              </ul>
+            </header>
+            <div class="case__media" data-case-media>
+              <img class="case__bg" src="images/case-1-bg.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async">
+              <img class="case__main" src="images/case-1-main.webp" width="1088" height="612" alt="Private work intelligence" loading="lazy" decoding="async" style="--main-h:306">
+            </div>
+          </article>
+
+          <article class="case" data-case>
+            <header class="case__head">
+              <h3 class="case__title" data-reveal-lines>AI editor</h3>
+              <ul class="case__tags" data-reveal-items aria-label="Deliverables">
+                <li class="tag tag--light">Website</li>
+                <li class="tag tag--light">Brand</li>
+              </ul>
+            </header>
+            <div class="case__media" data-case-media>
+              <img class="case__bg" src="images/case-2-bg.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async">
+              <img class="case__main" src="images/case-2-main.webp" width="1088" height="816" alt="AI editor" loading="lazy" decoding="async" style="--main-h:408">
+            </div>
+          </article>
+
+          <article class="case" data-case>
+            <header class="case__head">
+              <h3 class="case__title" data-reveal-lines>F1 concepts</h3>
+              <ul class="case__tags" data-reveal-items aria-label="Deliverables">
+                <li class="tag tag--light">Brand</li>
+                <li class="tag tag--light">Campaigns</li>
+              </ul>
+            </header>
+            <div class="case__media" data-case-media>
+              <img class="case__bg" src="images/case-3-bg.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async">
+              <img class="case__main" src="images/case-3-main.webp" width="1088" height="612" alt="F1 concepts" loading="lazy" decoding="async" style="--main-h:306">
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Who's in the room ===================== -->
+    <section class="rooms" aria-label="Who's in the room" data-rooms>
+      <div class="rooms__inner">
+        <h2 class="rooms__title" data-reveal-lines>Who's in the room</h2>
+
+        <ol class="rooms__list">
+          <li class="room is-active">
+            <h3 class="room__name" data-reveal-lines><span class="room__num">[1]</span> Founders</h3>
+            <div class="room__body">
+              <ul class="room__tags" data-reveal-items aria-label="Work for founders">
+                <li class="tag">Pitch decks</li>
+                <li class="tag">Brand</li>
+                <li class="tag">MVP</li>
+              </ul>
+              <p class="room__text" data-reveal-lines>You have a thesis and a runway. I turn it into a deck, a brand and a first version that match each other.</p>
+            </div>
+          </li>
+          <li class="room">
+            <h3 class="room__name" data-reveal-lines><span class="room__num">[2]</span> Audiences</h3>
+            <div class="room__body">
+              <ul class="room__tags" data-reveal-items aria-label="Work for audiences">
+                <li class="tag">Websites</li>
+                <li class="tag">Campaigns</li>
+                <li class="tag">Apps</li>
+              </ul>
+              <p class="room__text" data-reveal-lines>The people who decide if it worked. Fans, users and investors who never see the Figma file.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== Closing call to action ===================== -->
+    <section class="closing" aria-label="Get in touch" data-closing>
+      <div class="closing__bg" aria-hidden="true">
+        <img src="images/room-2400.webp"
+             srcset="images/room-1600.webp 1600w, images/room-2400.webp 2400w, images/room-3024.webp 3024w"
+             sizes="100vw" width="3024" height="1800" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="closing__content">
+        <h2 class="closing__text" data-reveal-lines>Make your product impossible to ignore</h2>
+        <p class="closing__text" data-reveal-lines>Tell me what you're building and who's building it.</p>
+        <div class="mask mask--button">
+          <a class="button" href="mailto:lisovskialexandr@gmail.com?subject=About%20my%20product" data-closing-button>
+            <span class="button__text-wrap">
+              <span class="button__text">Tell about your product</span>
+            </span>
+            <span class="button__aside" aria-hidden="true">
+              <span class="button__aside-bg"></span>
+              <img class="button__arrow" src="assets/arrow.svg" width="17.45" height="17.45" alt="">
+              <img class="button__arrow is-entering" src="assets/arrow.svg" width="17.45" height="17.45" alt="">
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== Footer ===================== -->
+  <footer class="foot" data-foot>
+    <div class="foot__top">
+      <div class="mask">
+        <a class="foot__logo" href="#home" aria-label="Back to top" data-foot-item>
+          <img class="nav__logo-left" src="assets/logo-circle.svg" width="34" height="34" alt="">
+          <img class="nav__logo-right" src="assets/logo-circles.svg" width="48.66" height="34" alt="">
+        </a>
+      </div>
+
+      <nav class="foot__nav" aria-label="Footer">
+        <a class="foot__link" href="#home"><span class="foot__roll" data-foot-item>Home</span></a>
+        <a class="foot__link" href="#about"><span class="foot__roll" data-foot-item>About</span></a>
+        <a class="foot__link" href="#values"><span class="foot__roll" data-foot-item>Values</span></a>
+      </nav>
+
+      <a class="foot__link foot__email" href="mailto:lisovskialexandr@gmail.com"><span class="foot__roll" data-foot-item><svg class="foot__email-arrow" viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2 0.5V9.5H12M8.5 6L12 9.5L8.5 13" fill="none" stroke="currentColor" stroke-width="2"/></svg>lisovskialexandr@gmail.com</span></a>
+
+      <!-- TODO: LinkedIn profile URL (then add target="_blank" rel="noopener") -->
+      <a class="foot__link foot__small" href="#linkedin"><span class="foot__roll" data-foot-item>Linkedin</span></a>
+    </div>
+
+    <hr class="foot__line" data-foot-line>
+
+    <div class="foot__bottom">
+      <div class="mask"><p data-foot-item><time class="foot__date" data-local-date>Friday, Nov 6, 2026 (GMT +04)</time></p></div>
+      <div class="mask"><p data-foot-item>©alexlisovski</p></div>
+    </div>
+  </footer>
+
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/CustomEase.min.js"></script>
+  <script src="js/vendor/SplitText.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/vendor/lenis.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

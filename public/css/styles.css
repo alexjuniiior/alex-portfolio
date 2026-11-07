@@ -1,0 +1,855 @@
+/* =========================================================
+   Alex Lisovski — portfolio v2 (sandbox)
+   Motion language inspired by bymonolog.com
+   ========================================================= */
+
+@font-face {
+  font-family: "PP Formula SemiExtended";
+  src: url("../fonts/PPFormula-SemiExtendedBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block; /* text is split into lines after fonts load, so avoid a font swap */
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  /* Colors (from Figma) */
+  --bg: #000;
+  --fg: #e8e4d9;
+  --muted: #52514c;     /* struck-through words */
+  --text-dim: #7b7b79;  /* text before it lights up on scroll */
+  --logo-gap: 46.4px;   /* spacing between client logos (from Figma) */
+  --ink: #030118;       /* text on light buttons */
+  --arrow-bg: #000;
+
+  /* Type */
+  --font: "PP Formula SemiExtended", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Layout */
+  --pad: 32px;
+
+  /* Motion (same curves and speeds as bymonolog.com) */
+  --ease-transition: cubic-bezier(.22, 1, .36, 1);  /* reveals */
+  --ease-hover: cubic-bezier(.16, 1, .35, 1);       /* hovers */
+  --ease-press: cubic-bezier(.48, 1.68, .64, 1);    /* springy press */
+  --dur-fast: .3s;
+  --dur-normal: .65s;
+  --dur-slow: .95s;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg);
+  /* Hide the scrollbar; scrolling still works (wheel, trackpad, keys, touch) */
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+body { -ms-overflow-style: none; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p { margin: 0; font: inherit; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--fg); color: var(--ink); }
+
+/* Until the intro is ready, hide animated elements so they never flash */
+html.is-loading [data-reveal] { visibility: hidden; }
+
+/* A clipping box: content slides up into view from behind it */
+.mask { display: block; overflow: clip; }
+
+/* ---------- Header ---------- */
+
+.nav {
+  position: fixed;          /* stays at the top while scrolling */
+  inset: max(var(--pad), env(safe-area-inset-top, 0px)) var(--pad) auto var(--pad);
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.nav > * { pointer-events: auto; }
+
+.nav__logo {
+  position: relative;
+  display: block;
+  width: 62.04px;
+  height: 34px;
+}
+.nav__logo img { position: absolute; top: 0; }
+.nav__logo-left { left: 0; width: 34px; height: 34px; }
+.nav__logo-right { left: 13.37px; width: 48.66px; height: 34px; }
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 32px;              /* Figma: "Projects" sits 32px left of "About" */
+}
+.nav__link {
+  display: block;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.nav__link-text {
+  display: block;
+  /* Rolling text on hover: a copy of the word waits one line below */
+  text-shadow: 0 1.4em 0 var(--fg);
+}
+.nav__link:focus-visible { outline: 2px solid var(--fg); outline-offset: -2px; }
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 120px var(--pad);
+}
+
+/* Background photo (from Figma, already darkened with exposure −1) */
+.hero { overflow: clip; isolation: isolate; }
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.hero__bg img,
+.hero__bg video {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+/* the photo melts into the black page below instead of ending in a hard edge */
+.hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--bg));
+}
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 344px;
+}
+
+.hero__title {
+  width: 100%;
+  max-width: 344px;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+/* "handed off." — struck through and dimmed.
+   The line is a drawn background so it can be animated left → right. */
+.hero__strike {
+  text-decoration: none;
+  color: var(--muted);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 var(--strike-y, 58%);
+  background-size: var(--strike, 100%) var(--strike-weight, .075em);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ---------- Button (hover recreated from bymonolog.com) ---------- */
+
+.mask--button { padding: 2px; margin: -2px; } /* room for the focus ring */
+
+/* Floating CTA: a copy of the hero button that rises into a fixed spot at
+   the bottom of the screen once the hero button has scrolled away */
+.cta-float {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(var(--pad), env(safe-area-inset-bottom, 0px)) - 2px); /* minus the focus-ring padding */
+  z-index: 90;             /* above the page, below the header */
+  padding: 2px;            /* room for the focus ring */
+  visibility: hidden;      /* shown by main.js */
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 8px;
+  border-radius: 4px;
+  background: var(--fg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.button__text-wrap { display: block; overflow: clip; height: 20px; }
+.button__text {
+  display: block;
+  /* the copy that rolls in from below on hover */
+  text-shadow: 0 20px 0 var(--ink);
+}
+
+.button__aside {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 2.4px;
+  overflow: hidden;
+}
+.button__aside-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 2.4px;
+  background: var(--arrow-bg);
+}
+.button__arrow {
+  position: relative;
+  z-index: 1;
+  width: 17.45px;
+  height: 17.45px;
+}
+.button__arrow.is-entering {
+  position: absolute;
+  left: 4.27px;
+  top: 4.27px;
+  transform: translate(-100%, 100%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button {
+    transition:
+      transform .35s var(--ease-press),
+      opacity .35s var(--ease-hover);
+  }
+  .button__text,
+  .button__arrow,
+  .button__aside-bg { transition: transform var(--dur-normal) var(--ease-hover); }
+
+  .button:hover { opacity: .9; }
+  .button:hover .button__text { transform: translateY(-20px); }
+  .button:hover .button__arrow { transform: translate(100%, -100%); }
+  .button:hover .button__arrow.is-entering { transform: translate(0, 0); }
+  .button:hover .button__aside-bg { transform: scale(.8); }
+  .button:active { transform: scale(.95); }
+
+  .nav__link-text { transition: transform var(--dur-normal) var(--ease-hover); }
+  .nav__link:hover .nav__link-text { transform: translateY(-1.4em); }
+}
+
+/* ---------- Intro statement + client logos ---------- */
+
+.statement {
+  padding: 60px var(--pad) 56px;
+}
+
+.statement__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+  width: 100%;
+  max-width: 657px;
+  margin: 0 auto;
+}
+
+.statement__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4em;               /* one empty line between the two sentences */
+  font-size: 32px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+/* Resting colors when JavaScript is off; with JS every letter starts grey
+   and lights up as you scroll */
+.statement__muted { color: var(--text-dim); }
+
+/* Logos: an endless row drifting right → left */
+.logos {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  overflow: clip;
+  /* soft edges so logos fade in and out instead of being cut */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+}
+
+.logos__track {
+  display: flex;
+  width: max-content;
+  opacity: .4;
+  will-change: transform;
+}
+
+.logos__set {
+  display: flex;
+  align-items: center;
+  gap: var(--logo-gap);
+  padding: 0 calc(var(--logo-gap) / 2);
+  margin: 0;
+  list-style: none;
+}
+.logos__set li { flex: none; }
+.logos__set img { display: block; max-width: none; }
+.logos__clip { width: 81px; height: 25px; overflow: clip; }
+
+/* ---------- Showcase: a screen that grows from the centre on scroll ---------- */
+
+.showcase {
+  --screen-ratio: 1.7778;     /* 344 × 218.4 in Figma */
+  --screen-start: 344px;     /* width before scrolling (Figma) */
+  /* end size: 80% of the screen, whichever side runs out first */
+  --screen-end: min(80vw, calc(80vh * var(--screen-ratio)), calc(80svh * var(--screen-ratio)));
+}
+
+/* Nothing here is clickable; on phones the (transparent) section overlaps
+   its neighbours, so let clicks and taps pass through to them */
+.showcase, .showcase * { pointer-events: none; }
+.showcase__stage {
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: clip;
+}
+
+/* The frame is laid out at its END size and scaled down at the start,
+   so the screens stay sharp at full size */
+.showcase__frame {
+  position: relative;
+  width: var(--screen-end);
+  aspect-ratio: var(--screen-ratio);
+  max-width: 100%;
+  transform-origin: 50% 50%;
+}
+/* Without JavaScript (or with reduced motion) show it at the Figma size */
+html:not(.has-motion) .showcase__frame { width: min(var(--screen-start), 100%); }
+
+.showcase__screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  visibility: hidden;
+}
+.showcase__screen.is-active { visibility: visible; }
+
+/* ---------- Approach + metrics (light section) ---------- */
+
+.approach {
+  --ink-strong: #000;
+  --ink-soft: #8c8b86;
+  background: var(--fg);
+  color: var(--ink-strong);
+  padding: 160px var(--pad);
+}
+
+/* Two columns from Figma: 506px (title / label) and 619px (text / metrics) */
+.approach__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 506px) minmax(0, 619px);
+  grid-template-areas:
+    "title text"
+    "label metrics";
+  row-gap: 0;
+  justify-content: center;
+  max-width: 1125px;
+  margin: 0 auto;
+}
+
+.approach__title {
+  grid-area: title;
+  max-width: 430px;
+  font-size: 32px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.approach__arrow {
+  display: inline-block;
+  width: 0.66em;
+  margin-left: 0.26em;
+  vertical-align: 0.02em;
+}
+.approach__arrow svg { display: block; width: 100%; height: auto; }
+
+.approach__text {
+  grid-area: text;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+/* Metrics start 484px from the section top in Figma (96px below the text) */
+.approach__label {
+  grid-area: label;
+  align-self: start;
+  max-width: 299px;
+  margin-top: var(--metrics-offset, 96px);
+  color: var(--ink-soft);
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.metrics {
+  grid-area: metrics;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  margin: var(--metrics-offset, 96px) 0 0;
+}
+.metric { display: flex; flex-direction: column; gap: 8px; }
+.metric__value {
+  font-size: 36px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.metric__label {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+/* Header and floating button switch to dark ink over light sections */
+.nav, .nav__logo img, .cta-float .button, .cta-float .button__aside-bg, .cta-float .button__arrow {
+  transition: color .4s ease, background-color .4s ease, filter .4s ease;
+}
+html.on-light .nav { color: #000; }
+html.on-light .nav__logo img { filter: brightness(0); }
+html.on-light .nav__link-text { text-shadow: 0 1.4em 0 #000; }
+html.cta-on-light .cta-float .button { background: #000; color: var(--fg); }
+html.cta-on-light .cta-float .button__text { text-shadow: 0 20px 0 var(--fg); }
+html.cta-on-light .cta-float .button__aside-bg { background: var(--fg); }
+html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
+
+/* ---------- Featured projects ---------- */
+
+.projects {
+  padding: 160px var(--pad) 147px;
+}
+.projects__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 720px);
+  max-width: 1260px;      /* Figma: heading at x=160, cases at x=700, 720 wide */
+  margin-left: max(0px, calc(50% - 596px));
+}
+.projects__sticky {
+  position: sticky;
+  top: 160px;             /* stays on the left while the cases scroll */
+}
+.projects__title {
+  font-size: 32px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.projects__sub {
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--ink-soft, #8c8b86);
+}
+.projects__list {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.case__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.case__title {
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.case__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.case__tags .tag--light {   /* cream pill, black text (beats the room tags' style) */
+  background: var(--fg);
+  color: #000;
+}
+
+/* Card: only the background by default; the "Main" design fades in on hover */
+.case__media {
+  position: relative;
+  aspect-ratio: 720 / 540;
+  overflow: clip;
+  background: #eaeaea;
+  isolation: isolate;
+}
+.case__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease-hover), filter .65s var(--ease-hover);
+}
+.case__main {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 75.556%;         /* 544 of 720 */
+  height: auto;
+  max-width: none;
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 16px)) scale(.96);
+  transition: opacity .55s var(--ease-hover), transform .85s var(--ease-hover);
+  pointer-events: none;
+}
+.case.is-hover .case__bg { transform: scale(1.04); filter: brightness(.9); }
+.case.is-hover .case__main { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+@media (hover: hover) and (pointer: fine) {
+  .case__media:hover .case__bg { transform: scale(1.04); filter: brightness(.9); }
+  .case__media:hover .case__main { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case__bg, .case__main { transition-duration: .01s; }
+}
+
+/* ---------- Who's in the room ---------- */
+
+.rooms {
+  padding: 160px var(--pad);
+}
+.rooms__inner {
+  max-width: 1192px;
+  margin: 0 auto;
+}
+.rooms__title {
+  font-size: 32px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.rooms__list {
+  list-style: none;
+  margin: 80px 0 0;       /* title at 160 → first row at 285 in Figma */
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 102px;             /* rows at 285 and 581 in Figma */
+}
+
+/* One row: big name on the left (654px), details on the right */
+.room {
+  display: grid;
+  grid-template-columns: minmax(0, 654px) minmax(0, 1fr);
+  column-gap: 140px;
+  align-items: start;
+  color: var(--text-dim);
+  transition: color .6s var(--ease-hover);
+}
+.room.is-active { color: var(--fg); }
+
+.room__name {
+  font-size: 80px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.room__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.room__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tag {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: rgba(232, 228, 217, .1);
+  font-family: var(--mono);
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.room__text {
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Closing call to action (photo of the room) ---------- */
+
+.closing {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 120px var(--pad);
+  overflow: clip;
+  isolation: isolate;
+}
+.closing__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.closing__bg img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+/* the black page above melts into the photo; a dimmer that lifts on scroll */
+.closing__bg::before,
+.closing__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.closing__bg::before {
+  bottom: auto;
+  height: 22%;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0), var(--bg));
+}
+.closing__bg::after {
+  background: #000;
+  opacity: var(--dim, 0);
+}
+.closing__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  width: 100%;
+  max-width: 408px;
+  text-align: center;
+}
+.closing__text {
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- Footer ---------- */
+
+.foot {
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+  padding: 60px var(--pad) 44px;
+  background: var(--bg);
+}
+.foot__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.foot__logo {
+  position: relative;
+  display: block;
+  width: 62.04px;
+  height: 34px;
+}
+.foot__logo img { position: absolute; top: 0; }
+.foot__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 46px;   /* empty 34px slot + gap in Figma */
+}
+.foot__link {
+  display: block;
+  overflow: clip;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.foot__small { font-size: 16px; }
+.foot__roll {
+  display: block;
+  /* rolling text on hover, like the header link */
+  text-shadow: 0 1.4em 0 var(--fg);
+}
+.foot__email-arrow {
+  width: .6em;
+  height: .6em;
+  margin-right: .32em;
+  vertical-align: .02em;
+}
+.foot__link:focus-visible,
+.foot__logo:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.foot__line {
+  height: 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  transform-origin: 0 50%;
+}
+.foot__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .foot__roll { transition: transform var(--dur-normal) var(--ease-hover); }
+  .foot__link:hover .foot__roll { transform: translateY(-1.4em); }
+}
+
+/* Projects on iPads (portrait and small landscape): the 720px cases leave no
+   room for the sticky heading, so it sits above them */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .projects { padding: 128px var(--pad) 120px; }
+  .projects__inner { grid-template-columns: minmax(0, 1fr); row-gap: 48px; max-width: 720px; margin: 0 auto; }
+  .projects__sticky { position: static; }
+}
+/* 1101–1279: keep the sticky heading, give the cases a bit less width */
+@media (min-width: 1101px) and (max-width: 1279px) {
+  .projects__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 640px); margin-left: 0; column-gap: 32px; }
+}
+
+/* ---------- Tablets (iPads portrait and landscape, small laptops) ---------- */
+@media (min-width: 761px) and (max-width: 1279px) {
+  /* Rooms: two columns no longer fit next to the 80px names, so each row
+     stacks: name, then tags and text in a readable column */
+  .rooms { padding: 128px var(--pad); }
+  .rooms__list { margin-top: 64px; gap: 88px; }
+  .room { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .room__name { font-size: clamp(56px, 8.4vw, 80px); }
+  .room__body { max-width: 560px; }
+
+  /* Approach: a little less side-by-side squeeze */
+  .approach { padding: 128px var(--pad); }
+  .approach__grid { column-gap: 40px; }
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 760px) {
+  :root { --pad: 20px; }
+  .hero { padding: 100px var(--pad); }
+  .statement { padding-top: 40px; }
+  .statement__inner { gap: 40px; }
+  .statement__text { font-size: 24px; }
+  .closing__text { font-size: 20px; }
+  .closing__content { max-width: 350px; gap: 28px; }
+  .foot { gap: 64px; padding: 48px var(--pad) calc(32px + env(safe-area-inset-bottom, 0px)); }
+  .foot__top { display: grid; grid-template-columns: 1fr auto; gap: 40px 20px; }
+  .foot__logo-wrap, .foot__top > .mask { grid-column: 1 / -1; }
+  .foot__nav { padding-bottom: 0; }
+  .foot__email { grid-column: 1 / -1; font-size: 20px; }
+  .foot__nav .foot__link { font-size: 22px; }
+  .foot__small { grid-column: 2; grid-row: 2; align-self: start; }
+  .foot__bottom { flex-direction: column; gap: 6px; font-size: 14px; }
+  .projects { padding: 96px var(--pad); }
+  .projects__inner { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin: 0; }
+  .projects__sticky { position: static; }
+  .projects__title { font-size: 26px; }
+  .projects__sub { font-size: 18px; }
+  .projects__list { gap: 48px; }
+  .case__head { align-items: flex-start; }
+  .case__title { font-size: 18px; }
+  .rooms { padding: 96px var(--pad); }
+  .rooms__title { font-size: 26px; }
+  .rooms__list { margin-top: 48px; gap: 64px; }
+  .room { grid-template-columns: minmax(0, 1fr); row-gap: 20px; }
+  .room__name { font-size: clamp(32px, 10.5vw, 48px); }
+  .tag { font-size: 15px; padding: 6px 10px; }
+  .room__text { font-size: 20px; }
+  .approach { padding: 96px var(--pad); }
+  .approach__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "title" "text" "label" "metrics";
+    row-gap: 32px;
+  }
+  .approach__title { font-size: 26px; }
+  .approach__text { gap: 28px; font-size: 20px; }
+  .approach__label { --metrics-offset: 40px; }
+  .metrics { --metrics-offset: 0px; gap: 32px; }
+  .metric__value { font-size: 32px; }
+  .metric__label { font-size: 20px; }
+  .showcase { --screen-end: min(calc(100vw - 2 * var(--pad)), calc(80svh * var(--screen-ratio))); }
+  /* The small starting screen sits in the middle of a full-height stage, which
+     left a tall empty gap under the logos. Pull the section up so the screen
+     starts about 64px below the logos (the stage is transparent). */
+  html.has-motion .showcase {
+    margin-top: calc((100vh - var(--screen-end) / var(--screen-ratio) * .55) / -2 + 64px);
+    margin-top: calc((100svh - var(--screen-end) / var(--screen-ratio) * .55) / -2 + 64px);
+    /* same at the bottom: the next section starts 64px under the full-size screen */
+    margin-bottom: calc((100vh - var(--screen-end) / var(--screen-ratio)) / -2 + 64px);
+    margin-bottom: calc((100svh - var(--screen-end) / var(--screen-ratio)) / -2 + 64px);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
