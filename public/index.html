@@ -104,24 +104,26 @@
     <section class="showcase" aria-label="Selected work">
       <div class="showcase__stage">
         <div class="showcase__frame" data-showcase>
-          <!-- Screens swap while the frame grows; the first one is visible without JavaScript -->
-          <img class="showcase__screen is-active" src="images/work-1-1440.webp"
+          <!-- Screens swap while the frame grows; the first one is visible without JavaScript.
+               Screens 2-6 load only when the section is coming up (main.js), so they don't
+               compete with the hero on slow connections. -->
+          <img class="showcase__screen is-active" fetchpriority="low" src="images/work-1-1440.webp"
                srcset="images/work-1-1440.webp 1440w, images/work-1-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="Cnduit website" decoding="async">
-          <img class="showcase__screen" src="images/work-2-1440.webp"
-               srcset="images/work-2-1440.webp 1440w, images/work-2-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+          <img class="showcase__screen" data-src="images/work-2-1440.webp"
+               data-srcset="images/work-2-1440.webp 1440w, images/work-2-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="Pacific Machines pitch deck" decoding="async">
-          <img class="showcase__screen" src="images/work-3-1440.webp"
-               srcset="images/work-3-1440.webp 1440w, images/work-3-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+          <img class="showcase__screen" data-src="images/work-3-1440.webp"
+               data-srcset="images/work-3-1440.webp 1440w, images/work-3-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="Live entertainment AI concept" decoding="async">
-          <img class="showcase__screen" src="images/work-4-1440.webp"
-               srcset="images/work-4-1440.webp 1440w, images/work-4-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+          <img class="showcase__screen" data-src="images/work-4-1440.webp"
+               data-srcset="images/work-4-1440.webp 1440w, images/work-4-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="HLTV redesign" decoding="async">
-          <img class="showcase__screen" src="images/work-5-1440.webp"
-               srcset="images/work-5-1440.webp 1440w, images/work-5-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+          <img class="showcase__screen" data-src="images/work-5-1440.webp"
+               data-srcset="images/work-5-1440.webp 1440w, images/work-5-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="Driving assistant app" decoding="async">
-          <img class="showcase__screen" src="images/work-6-1440.webp"
-               srcset="images/work-6-1440.webp 1440w, images/work-6-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
+          <img class="showcase__screen" data-src="images/work-6-1440.webp"
+               data-srcset="images/work-6-1440.webp 1440w, images/work-6-2880.webp 2880w" sizes="(max-width: 760px) 100vw, 80vw"
                width="2880" height="1620" alt="Formula 1 event website" decoding="async">
         </div>
       </div>

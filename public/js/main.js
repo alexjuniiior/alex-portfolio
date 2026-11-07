@@ -572,6 +572,46 @@
     });
   }
 
+  /* ---------- Load the later showcase screens only when they're needed ---------- */
+  function lazyScreens() {
+    var imgs = Array.prototype.slice.call(document.querySelectorAll('img[data-src]'));
+    if (!imgs.length) return;
+    var done = false;
+    function load() {
+      if (done) return;
+      done = true;
+      imgs.forEach(function (img) {
+        if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        img.removeAttribute('data-srcset');
+      });
+    }
+    // as the section is about to come up (screens 2-6 are only needed once the
+    // first screen has grown to the middle, a good while later)...
+    if (window.ScrollTrigger) ScrollTrigger.create({
+      trigger: '.showcase',
+      start: 'top bottom+=20%',
+      once: true,
+      onEnter: load
+    });
+    else load();
+    // ...or in the background once the page and the hero video have loaded
+    // (whichever comes first; 10s at most), so they never slow the hero down
+    var video = document.querySelector('.hero__video');
+    var pageLoaded = document.readyState === 'complete';
+    var videoReady = !video || video.readyState >= 4 || reduceMotion;
+    function maybe() {
+      if (pageLoaded && videoReady) (window.requestIdleCallback || function (f) { setTimeout(f, 500); })(load);
+    }
+    if (!pageLoaded) window.addEventListener('load', function () { pageLoaded = true; maybe(); });
+    if (!videoReady) {
+      video.addEventListener('canplaythrough', function () { videoReady = true; maybe(); }, { once: true });
+      setTimeout(function () { videoReady = true; maybe(); }, 10000);
+    }
+    maybe();
+  }
+
   /* ---------- Numbers that count up when they appear ---------- */
   function countUpOnScroll() {
     if (!window.ScrollTrigger || reduceMotion) return;
@@ -622,6 +662,7 @@
     .then(function () {
       footerDate();
       inPageLinks();
+      lazyScreens();
       heroVideo();
       heroIntro();
       floatingCta();
