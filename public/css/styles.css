@@ -527,6 +527,12 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
 }
 
 /* Card: only the background by default; the "Main" design fades in on hover */
+/* Card hover timing (slower and softer than the button hovers, user's request 8 Nov):
+   fades ease in and out evenly, movement glides to a gentle stop */
+.case {
+  --ease-card-fade: cubic-bezier(.45, 0, .25, 1);
+  --ease-card-move: cubic-bezier(.22, 1, .36, 1);
+}
 .case__media {
   position: relative;
   aspect-ratio: 720 / 540;
@@ -547,7 +553,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .65s var(--ease-hover);
+  transition: opacity 1.1s var(--ease-card-fade);
 }
 .case__bg {
   position: absolute;
@@ -556,7 +562,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   height: 100%;
   max-width: none;
   object-fit: cover;
-  transition: transform 1.1s var(--ease-hover);
+  transition: transform 1.8s var(--ease-card-move);
 }
 .case__main {
   position: absolute;
@@ -567,7 +573,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   max-width: none;
   opacity: 0;
   transform: translate(-50%, calc(-50% + 16px)) scale(.96);
-  transition: opacity .55s var(--ease-hover), transform .85s var(--ease-hover);
+  transition: opacity 1s var(--ease-card-fade), transform 1.4s var(--ease-card-move);
   pointer-events: none;
   z-index: 2;
 }
