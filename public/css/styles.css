@@ -527,12 +527,6 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
 }
 
 /* Card: only the background by default; the "Main" design fades in on hover */
-/* Card hover timing (slower and softer than the button hovers, user's request 8 Nov):
-   fades ease in and out evenly, movement glides to a gentle stop */
-.case {
-  --ease-card-fade: cubic-bezier(.45, 0, .25, 1);
-  --ease-card-move: cubic-bezier(.22, 1, .36, 1);
-}
 .case__media {
   position: relative;
   aspect-ratio: 720 / 540;
@@ -553,7 +547,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   background: #000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 1.1s var(--ease-card-fade);
+  transition: opacity .65s var(--ease-hover);
 }
 .case__bg {
   position: absolute;
@@ -562,7 +556,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   height: 100%;
   max-width: none;
   object-fit: cover;
-  transition: transform 1.8s var(--ease-card-move);
+  transition: transform 1.1s var(--ease-hover);
 }
 .case__main {
   position: absolute;
@@ -573,7 +567,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   max-width: none;
   opacity: 0;
   transform: translate(-50%, calc(-50% + 16px)) scale(.96);
-  transition: opacity 1s var(--ease-card-fade), transform 1.4s var(--ease-card-move);
+  transition: opacity .55s var(--ease-hover), transform .85s var(--ease-hover);
   pointer-events: none;
   z-index: 2;
 }
@@ -836,6 +830,11 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   .projects__inner { grid-template-columns: minmax(0, 1fr); row-gap: 40px; margin: 0; }
   .projects__sticky { position: static; }
   .projects__title { font-size: 26px; }
+  /* Phones reveal the design on scroll: slower, softer than the desktop hover
+     (user's request 8 Nov). Fades ease in and out evenly, movement glides to a stop. */
+  .case__media::after { transition: opacity 1.1s cubic-bezier(.45, 0, .25, 1); }
+  .case__bg { transition: transform 1.8s cubic-bezier(.22, 1, .36, 1); }
+  .case__main { transition: opacity 1s cubic-bezier(.45, 0, .25, 1), transform 1.4s cubic-bezier(.22, 1, .36, 1); }
   .projects__sub { font-size: 18px; }
   .projects__list { gap: 48px; }
   .case__head { align-items: flex-start; }
