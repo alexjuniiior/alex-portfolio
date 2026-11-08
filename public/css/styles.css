@@ -583,6 +583,15 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   transition: opacity .4s cubic-bezier(.45, 0, .25, 1);   /* fits the 0.8s step */
 }
 .case__slide.is-current { opacity: 1; }
+/* screens of different heights: each one centred vertically at its own size */
+.case__main--varied { overflow: visible; }
+.case__main--varied .case__slide {
+  inset: auto;
+  left: 0;
+  top: 50%;
+  height: auto;
+  transform: translateY(-50%);
+}
 .case.is-hover .case__bg { transform: scale(1.04); }
 .case.is-hover .case__media::after { opacity: .1; }
 .case.is-hover .case__main { opacity: 1; transform: translate(-50%, -50%) scale(1); }

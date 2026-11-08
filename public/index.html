@@ -211,7 +211,12 @@
             </header>
             <div class="case__media" data-case-media>
               <img class="case__bg" src="images/case-2-bg.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async">
-              <img class="case__main" src="images/case-2-main.webp" width="1088" height="816" alt="AI editor" loading="lazy" decoding="async" style="--main-h:408">
+              <!-- Three screens of different heights, each centred in the card (as in Figma) -->
+              <div class="case__main case__main--slides case__main--varied" style="aspect-ratio: 544 / 437" data-case-slides>
+                <img class="case__slide is-current" src="images/case-2-main-1.webp" width="1088" height="816" alt="AI editor: Cnduit home page" loading="lazy" decoding="async">
+                <img class="case__slide" src="images/case-2-main-2.webp" width="1088" height="874" alt="AI editor: automate section" loading="lazy" decoding="async">
+                <img class="case__slide" src="images/case-2-main-3.webp" width="1088" height="600" alt="AI editor: model agnostic" loading="lazy" decoding="async">
+              </div>
             </div>
           </article>
 
