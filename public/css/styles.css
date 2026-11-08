@@ -580,7 +580,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   height: 100%;
   max-width: none;
   opacity: 0;
-  transition: opacity .7s cubic-bezier(.45, 0, .25, 1);
+  transition: opacity .4s cubic-bezier(.45, 0, .25, 1);   /* fits the 0.8s step */
 }
 .case__slide.is-current { opacity: 1; }
 .case.is-hover .case__bg { transform: scale(1.04); }

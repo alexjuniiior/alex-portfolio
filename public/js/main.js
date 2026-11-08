@@ -550,9 +550,9 @@
     });
 
     // Cards with several screens: while the card is shown (hover on desktop,
-    // mid-screen on phones), step through them every 1.8s; start again from
+    // mid-screen on phones), step through them every 0.8s; start again from
     // the first one each time
-    var SLIDE_EVERY = 1800;
+    var SLIDE_EVERY = 800;
     cases.forEach(function (c, i) {
       var box = c.querySelector('[data-case-slides]');
       if (!box) return;
