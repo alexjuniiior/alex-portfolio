@@ -192,7 +192,12 @@
             </header>
             <div class="case__media" data-case-media>
               <img class="case__bg" src="images/case-1-bg.webp" width="1440" height="1080" alt="" loading="lazy" decoding="async">
-              <img class="case__main" src="images/case-1-main.webp" width="1088" height="612" alt="Private work intelligence" loading="lazy" decoding="async" style="--main-h:306">
+              <!-- Several screens: they play one after another while the card is hovered (or mid-screen on phones) -->
+              <div class="case__main case__main--slides" style="aspect-ratio: 544 / 306" data-case-slides>
+                <img class="case__slide is-current" src="images/case-1-main-1.webp" width="1088" height="612" alt="Private work intelligence: our thesis" loading="lazy" decoding="async">
+                <img class="case__slide" src="images/case-1-main-2.webp" width="1088" height="612" alt="Private work intelligence: solutions" loading="lazy" decoding="async">
+                <img class="case__slide" src="images/case-1-main-3.webp" width="1088" height="612" alt="Private work intelligence: team" loading="lazy" decoding="async">
+              </div>
             </div>
           </article>
 

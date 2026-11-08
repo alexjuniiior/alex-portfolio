@@ -549,6 +549,44 @@
       if (mq.addEventListener) mq.addEventListener('change', sync); else if (mq.addListener) mq.addListener(sync);
     });
 
+    // Cards with several screens: while the card is shown (hover on desktop,
+    // mid-screen on phones), step through them every 1.8s; start again from
+    // the first one each time
+    var SLIDE_EVERY = 1800;
+    cases.forEach(function (c, i) {
+      var box = c.querySelector('[data-case-slides]');
+      if (!box) return;
+      var slides = box.querySelectorAll('.case__slide');
+      var media = c.querySelector('[data-case-media]');
+      var cur = 0, timer = null, resetTimer = null, on = false;
+      function show(n) {
+        slides[cur].classList.remove('is-current');
+        cur = n;
+        slides[cur].classList.add('is-current');
+      }
+      function start() {
+        if (on) return;
+        on = true;
+        clearTimeout(resetTimer);
+        clearInterval(timer);
+        timer = setInterval(function () { show((cur + 1) % slides.length); }, SLIDE_EVERY);
+      }
+      function stop() {
+        if (!on) return;
+        on = false;
+        clearInterval(timer);
+        // back to the first screen once the card has faded out
+        resetTimer = setTimeout(function () { if (!on) show(0); }, 900);
+      }
+      media.addEventListener('mouseenter', function () { if (!scrollMode()) start(); });
+      media.addEventListener('mouseleave', function () { if (!scrollMode()) stop(); });
+      // scroll mode: follow the card's is-hover class
+      new MutationObserver(function () {
+        if (!scrollMode()) return;
+        c.classList.contains('is-hover') ? start() : stop();
+      }).observe(c, { attributes: true, attributeFilter: ['class'] });
+    });
+
     if (reduceMotion) return;
     // Card image wipes up from the bottom and settles from a slight zoom
     cases.forEach(function (c) {
