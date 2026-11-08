@@ -571,7 +571,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   pointer-events: none;
   z-index: 2;
 }
-/* A card with several screens: they cross-fade in place */
+/* A card with several screens: they swap in place */
 .case__main--slides { overflow: clip; }
 .case__slide {
   position: absolute;
@@ -580,7 +580,7 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   height: 100%;
   max-width: none;
   opacity: 0;
-  transition: opacity .4s cubic-bezier(.45, 0, .25, 1);   /* fits the 0.8s step */
+  /* hard cut from one screen to the next, no fade (user's request 8 Nov) */
 }
 .case__slide.is-current { opacity: 1; }
 /* screens of different heights: each one centred vertically at its own size */
