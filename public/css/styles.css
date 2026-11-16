@@ -929,6 +929,8 @@ html.about-open { overflow: hidden; }   /* page behind stays put */
 
 @media (max-width: 760px) {
   .about__bar { padding: 20px 20px 16px; }
+  .about__close { padding-right: 8px; }
+  .about__close-key { display: none; }   /* no Esc key on phones */
   .about__body { padding: 28px 20px calc(40px + env(safe-area-inset-bottom, 0px)); font-size: 17px; }
   .about__label { font-size: 17px; }
   .about__block { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
