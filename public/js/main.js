@@ -643,6 +643,105 @@
     if (location.hash === '#about') open(true);
   }
 
+  /* ---------- About photo: a small warp under the mouse (desktop only) ----------
+     A WebGL copy of the photo sits on top while hovered: the area around the
+     cursor swells gently and ripples a little, easing in and out. */
+  function photoWarp() {
+    var box = document.querySelector('[data-about-photo]');
+    var img = box && box.querySelector('img');
+    if (!img || reduceMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    var canvas = null, gl = null, prog = null, tex = null, loc = {}, ready = false, raf = 0;
+    var state = { s: 0 };                     // warp strength 0..1 (tweened)
+    var mouse = { x: .5, y: .5 }, target = { x: .5, y: .5 };
+    var t0 = performance.now();
+
+    var VS = 'attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
+    var FS = [
+      'precision mediump float;',
+      'uniform sampler2D t;uniform vec2 m;uniform float s;uniform float k;uniform float time;varying vec2 v;',
+      'void main(){',
+      '  vec2 d=v-m; d.x*=k;',                                   // keep the swell round on a non-square photo
+      '  float f=smoothstep(.42,0.,length(d));',                  // 1 at the cursor, 0 further out
+      '  vec2 uv=v-(v-m)*f*s*.16;',                               // gentle magnify towards the cursor
+      '  uv+=vec2(sin(v.y*14.+time*1.6),cos(v.x*12.+time*1.4))*.004*s*f;', // faint ripple inside it
+      '  gl_FragColor=texture2D(t,clamp(uv,0.,1.));',
+      '}'
+    ].join('\n');
+
+    function setup() {
+      canvas = document.createElement('canvas');
+      canvas.className = 'about__warp';
+      canvas.setAttribute('aria-hidden', 'true');
+      box.appendChild(canvas);
+      gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+      if (!gl) return false;
+      function sh(type, src) { var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; }
+      prog = gl.createProgram();
+      gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+      gl.useProgram(prog);
+      var buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      var p = gl.getAttribLocation(prog, 'p');
+      gl.enableVertexAttribArray(p);
+      gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+      ['m', 's', 'k', 'time', 't'].forEach(function (n) { loc[n] = gl.getUniformLocation(prog, n); });
+      tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);   // the photo's rounded corners are transparent
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.uniform1i(loc.t, 0);
+      return true;
+    }
+    function size() {
+      var r = box.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
+      gl.uniform1f(loc.k, r.width / r.height);
+    }
+    function frame() {
+      mouse.x += (target.x - mouse.x) * .12;
+      mouse.y += (target.y - mouse.y) * .12;
+      gl.uniform2f(loc.m, mouse.x, mouse.y);
+      gl.uniform1f(loc.s, state.s);
+      gl.uniform1f(loc.time, (performance.now() - t0) / 1000);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      raf = state.s > 0.001 ? requestAnimationFrame(frame) : 0;
+      if (!raf) canvas.classList.remove('is-on');           // back to the crisp photo
+    }
+    function point(e) {
+      var r = box.getBoundingClientRect();
+      target.x = (e.clientX - r.left) / r.width;
+      target.y = 1 - (e.clientY - r.top) / r.height;
+    }
+    box.addEventListener('mouseenter', function (e) {
+      if (!img.complete || !img.naturalWidth) return;
+      if (!ready) { ready = setup(); if (!ready) return; }
+      point(e);
+      mouse.x = target.x; mouse.y = target.y;
+      size();
+      canvas.classList.add('is-on');
+      gsap.to(state, { s: 1, duration: 1.1, ease: 'ease-transition', overwrite: true });
+      if (!raf) raf = requestAnimationFrame(frame);
+    });
+    box.addEventListener('mousemove', point);
+    box.addEventListener('mouseleave', function () {
+      if (!ready) return;
+      gsap.to(state, { s: 0, duration: .9, ease: 'ease-transition', overwrite: true });
+    });
+  }
+
   function footerReveal() {
     if (!window.ScrollTrigger || reduceMotion) return;
     var foot = document.querySelector('[data-foot]');
@@ -866,6 +965,7 @@
       themeSwitch();
       if (window.ScrollTrigger) ScrollTrigger.refresh();
       aboutPanel();
+      photoWarp();
     })
     .catch(ready);
 })();

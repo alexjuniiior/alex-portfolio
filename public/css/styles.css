@@ -859,9 +859,7 @@ html.about-open { overflow: hidden; }   /* page behind stays put */
   justify-content: flex-end;
   padding: 24px 24px 16px;
   margin-bottom: -16px;
-  pointer-events: none;
-  /* text scrolling up fades out under the Close pill instead of colliding with it */
-  background: linear-gradient(var(--bg) 72%, rgba(0, 0, 0, 0));
+  pointer-events: none;     /* no background: nothing smears the content scrolling under it */
 }
 .about__close {
   pointer-events: auto;
@@ -902,7 +900,19 @@ html.about-open { overflow: hidden; }   /* page behind stays put */
   margin-top: 32px;
   aspect-ratio: 672 / 637;
 }
+/* the photo needs its own box for the hover warp canvas */
+.about__photo { position: relative; }
 .about__photo img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+/* hover warp: a WebGL copy of the photo drawn on top while the mouse is over it */
+.about__warp {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+.about__warp.is-on { opacity: 1; }
 
 .about__block {
   display: grid;
