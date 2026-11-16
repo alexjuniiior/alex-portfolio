@@ -487,7 +487,7 @@
   function inPageLinks() {
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href^="#"]');
-      if (!a) return;
+      if (!a || a.hasAttribute('data-about-open')) return;   // About opens the panel instead
       var id = a.getAttribute('href').slice(1);
       var target = id && document.getElementById(id);
       e.preventDefault();
@@ -495,6 +495,152 @@
       if (lenis) lenis.scrollTo(id === 'home' ? 0 : target, { duration: 1.6, easing: function (t) { return 1 - Math.pow(1 - t, 4); } });
       else target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
     });
+  }
+
+  /* ---------- About: panel from the right ----------
+     Opens from "About" (header and footer) or a link to /#about; closes with
+     the Close button, Esc, a click on the dimmed page, or the browser's Back. */
+  CustomEase.create('ease-panel-out', '0.65, 0, 0.35, 1');
+  function aboutPanel() {
+    var panel = document.getElementById('about');
+    var backdrop = document.querySelector('.about-backdrop');
+    if (!panel || !backdrop) return;
+    var closeBtn = panel.querySelector('.about__close');
+    var photo = panel.querySelector('[data-about-photo]');
+    var photoImg = photo && photo.querySelector('img');
+    var line = panel.querySelector('[data-about-line]');
+    var blocks = Array.prototype.slice.call(panel.querySelectorAll('[data-about-lines]'));
+    var outside = Array.prototype.slice.call(document.querySelectorAll('header.nav, main, footer, .cta-float'));
+    var isOpen = false, lastFocus = null, tl = null, splits = null, io = null;
+    var shown = new WeakSet();
+
+    function setInert(on) {
+      outside.forEach(function (el) { on ? el.setAttribute('inert', '') : el.removeAttribute('inert'); });
+    }
+
+    // Lines are split the first time the panel is visible (they need its width)
+    function ensureSplit() {
+      if (splits || reduceMotion) return;
+      splits = blocks.map(function (el) {
+        return SplitText.create(el, {
+          type: 'lines', mask: 'lines', linesClass: 'about-line', autoSplit: true,
+          onSplit: function (self) { gsap.set(self.lines, { yPercent: shown.has(el) ? 0 : 150 }); }
+        });
+      });
+    }
+    function revealBlock(el, delay) {
+      if (shown.has(el)) return;
+      shown.add(el);
+      var lines = el.querySelectorAll('.about-line');
+      gsap.to(lines, { yPercent: 0, duration: DUR.slow, stagger: LINE_STAGGER, delay: delay || 0, ease: 'ease-transition', overwrite: true });
+    }
+    function resetContent() {
+      if (reduceMotion) return;
+      blocks.forEach(function (el) {
+        shown.delete(el);
+        gsap.set(el.querySelectorAll('.about-line'), { yPercent: 150 });
+      });
+      if (photo) { gsap.set(photo, { clipPath: 'inset(100% 0% 0% 0%)' }); gsap.set(photoImg, { scale: 1.15 }); }
+      if (line) gsap.set(line, { scaleX: 0 });
+    }
+
+    // Lower blocks reveal as they scroll into the panel
+    function watchScroll() {
+      if (reduceMotion || !('IntersectionObserver' in window)) return;
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          var el = en.target;
+          // scrolled past without stopping (e.g. a fast fling): show it as it is
+          var passed = !en.isIntersecting && en.rootBounds && en.boundingClientRect.bottom < en.rootBounds.top;
+          if (passed) {
+            shown.add(el);
+            if (el === photo) { gsap.set(photo, { clipPath: 'inset(0% 0% 0% 0%)' }); gsap.set(photoImg, { scale: 1 }); }
+            else if (el === line) gsap.set(line, { scaleX: 1 });
+            else gsap.set(el.querySelectorAll('.about-line'), { yPercent: 0 });
+            io.unobserve(el);
+            return;
+          }
+          if (!en.isIntersecting) return;
+          if (el === photo) {
+            gsap.to(photo, { clipPath: 'inset(0% 0% 0% 0%)', duration: DUR.slower, ease: 'ease-transition' });
+            gsap.to(photoImg, { scale: 1, duration: 1.6, ease: 'ease-transition' });
+          } else if (el === line) {
+            gsap.to(line, { scaleX: 1, duration: DUR.slower, ease: 'ease-transition' });
+          } else revealBlock(el);
+          io.unobserve(el);
+        });
+      }, { root: panel, rootMargin: '0px 0px -8% 0px' });
+      blocks.concat([photo, line]).forEach(function (el) { if (el) io.observe(el); });
+    }
+
+    function open(fromHistory) {
+      if (isOpen) return;
+      isOpen = true;
+      lastFocus = document.activeElement;
+      panel.hidden = false;
+      backdrop.hidden = false;
+      panel.scrollTop = 0;
+      root.classList.add('about-open');
+      if (lenis) lenis.stop();
+      setInert(true);
+      if (!fromHistory && location.hash !== '#about') history.pushState({ about: true }, '', '#about');
+      ensureSplit();
+      resetContent();
+      if (tl) tl.kill();
+      if (reduceMotion) {
+        gsap.set(backdrop, { opacity: .6 });
+        gsap.set(panel, { xPercent: 0 });
+      } else {
+        tl = gsap.timeline()
+          .fromTo(backdrop, { opacity: 0 }, { opacity: .6, duration: DUR.slow, ease: 'ease-transition' }, 0)
+          .fromTo(panel, { xPercent: 100 }, { xPercent: 0, duration: 1.1, ease: 'ease-transition' }, 0)
+          .fromTo(closeBtn, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: DUR.normal, ease: 'ease-transition' }, 0.45);
+        // the intro paragraphs come in one after another as the panel lands
+        panel.querySelectorAll('.about__intro [data-about-lines]').forEach(function (el, i) { revealBlock(el, 0.35 + i * 0.12); });
+        // start watching once the panel has mostly landed, so the photo follows the text
+        gsap.delayedCall(0.55, function () { if (isOpen) watchScroll(); });
+      }
+      closeBtn.focus({ preventScroll: true });
+    }
+
+    function close(fromHistory) {
+      if (!isOpen) return;
+      isOpen = false;
+      if (io) { io.disconnect(); io = null; }
+      if (!fromHistory && history.state && history.state.about) { history.back(); return finish(); }
+      if (!fromHistory && location.hash === '#about') history.replaceState(null, '', location.pathname + location.search);
+      finish();
+    }
+    function finish() {
+      if (tl) tl.kill();
+      function done() {
+        panel.hidden = true;
+        backdrop.hidden = true;
+        root.classList.remove('about-open');
+        setInert(false);
+        if (lenis) lenis.start();
+        if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+      }
+      if (reduceMotion) return done();
+      tl = gsap.timeline({ onComplete: done })
+        .to(panel, { xPercent: 100, duration: 0.8, ease: 'ease-panel-out' }, 0)
+        .to(backdrop, { opacity: 0, duration: 0.7, ease: 'ease-panel-out' }, 0.05);
+    }
+
+    document.addEventListener('click', function (e) {
+      var opener = e.target.closest && e.target.closest('[data-about-open]');
+      if (opener) { e.preventDefault(); open(); return; }
+      if (e.target.closest && e.target.closest('[data-about-close]')) { e.preventDefault(); close(); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!isOpen) return;
+      if (e.key === 'Escape') { e.preventDefault(); close(); }
+      if (e.key === 'Tab') { e.preventDefault(); closeBtn.focus(); }  // only one control inside
+    });
+    window.addEventListener('popstate', function () {
+      location.hash === '#about' ? open(true) : close(true);
+    });
+    if (location.hash === '#about') open(true);
   }
 
   function footerReveal() {
@@ -719,6 +865,7 @@
       footerReveal();
       themeSwitch();
       if (window.ScrollTrigger) ScrollTrigger.refresh();
+      aboutPanel();
     })
     .catch(ready);
 })();

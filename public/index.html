@@ -45,7 +45,7 @@
         <a class="nav__link" href="#work" data-reveal="nav"><span class="nav__link-text">Projects</span></a>
       </div>
       <div class="mask">
-        <a class="nav__link" href="#about" data-reveal="nav"><span class="nav__link-text">About</span></a>
+        <a class="nav__link" href="#about" data-reveal="nav" data-about-open aria-haspopup="dialog" aria-controls="about"><span class="nav__link-text">About</span></a>
       </div>
     </nav>
   </header>
@@ -307,7 +307,7 @@
 
       <nav class="foot__nav" aria-label="Footer">
         <a class="foot__link" href="#home"><span class="foot__roll" data-foot-item>Home</span></a>
-        <a class="foot__link" href="#about"><span class="foot__roll" data-foot-item>About</span></a>
+        <a class="foot__link" href="#about" data-about-open aria-haspopup="dialog" aria-controls="about"><span class="foot__roll" data-foot-item>About</span></a>
         <a class="foot__link" href="#values"><span class="foot__roll" data-foot-item>Values</span></a>
       </nav>
 
@@ -323,6 +323,60 @@
       <div class="mask"><p data-foot-item>©alexlisovski</p></div>
     </div>
   </footer>
+
+  <!-- ===================== About: panel from the right (like bymonolog.com) ===================== -->
+  <div class="about-backdrop" data-about-close hidden></div>
+  <aside class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="about-title" data-lenis-prevent hidden>
+    <div class="about__bar">
+      <button class="about__close" type="button" data-about-close>
+        <span class="about__close-text">Close</span><span class="about__close-key" aria-hidden="true">Esc</span>
+      </button>
+    </div>
+
+    <div class="about__body">
+      <div class="about__intro">
+        <h2 class="visually-hidden" id="about-title">About Alex Lisovski</h2>
+        <p data-about-lines>Hey, I’m Alex. For as long as I can remember, I wanted to work next to founders: people who build things the world doesn’t know it needs yet, and who change how others think along the way.</p>
+        <p data-about-lines>I’ve always liked taking “boring” fields and connecting the dots until they came alive. Along the way I’ve worked with all kinds of people and made a ton of mistakes. Those mistakes taught me most of what I know.</p>
+        <p data-about-lines>Now I design products with founders, from the first pitch deck to the version people open every day.</p>
+        <p class="about__reading" data-about-lines>Now reading <em>Nexus</em> by Yuval Noah Harari.<br>Building my next venture with you?</p>
+      </div>
+
+      <div class="about__photo" data-about-photo>
+        <img src="images/about-photo-672.webp" srcset="images/about-photo-672.webp 672w, images/about-photo-1344.webp 1344w" sizes="(max-width: 760px) 100vw, 672px" width="1344" height="1274" alt="Alex Lisovski" loading="lazy" decoding="async">
+      </div>
+
+      <section class="about__block" aria-labelledby="about-think">
+        <h3 class="about__label" id="about-think" data-about-lines>How I think</h3>
+        <div class="about__text">
+            <p class="about__q" data-about-lines>I start with the weakest point.</p>
+            <p data-about-lines>Before I touch a layout, I research the product: who it’s for, where it breaks, and where it promises more than it delivers. The weakest point is usually where the most value is hiding.</p>
+            <p class="about__q" data-about-lines>Then I forget what I know.</p>
+            <p data-about-lines>I used to think that the more I knew about a product, the better I could design it. Now I know that sometimes you have to become a layman again, someone who has never heard of you, to feel what using it is really like. I try to live in both places: deep enough to argue with engineers, and naive enough to feel what a user feels.</p>
+            <p class="about__q" data-about-lines>I stay in the room.</p>
+            <p data-about-lines>One of my favorite days at work was a long conversation with an engineer at a biotech company. We went past the features until we could see what the product could become for the person at the very end of it. That’s where good decisions come from. A handoff can’t do that.</p>
+            <p class="about__q" data-about-lines>I show, not describe.</p>
+            <p data-about-lines>I build working prototypes so founders and engineers can hold an idea in their hands instead of imagining it.</p>
+        </div>
+      </section>
+
+      <hr class="about__line" data-about-line>
+
+      <section class="about__block" aria-labelledby="about-principles">
+        <h3 class="about__label" id="about-principles" data-about-lines>Principles</h3>
+        <div class="about__text">
+            <p class="about__q" data-about-lines>01 — Make mistakes while you’re young.</p>
+            <p data-about-lines>I’ve made plenty, so I know where products usually go wrong. With you, I’d rather make the mistakes early in a prototype, where they’re cheap, than have your users find them after launch.</p>
+            <p class="about__q" data-about-lines>02 — Treat people like they deserve the best.</p>
+            <p data-about-lines>You get my full attention, not a slot in a queue. Your users get the same care, down to the person reading your site on their phone at 1am, because that’s who decides whether your product works.</p>
+            <p class="about__q" data-about-lines>03 — Rest. Reset.</p>
+            <p data-about-lines>After months inside a product, every team stops seeing it clearly. I step away, take pictures, move, see friends, and come back with fresh eyes, so I can catch what your team has stopped noticing.</p>
+            <p class="about__q" data-about-lines>04 — Keep building.</p>
+            <p data-about-lines>I build working prototypes so founders and engineers can hold an idea in their hands instead of imagining it.</p>
+        </div>
+      </section>
+    </div>
+  </aside>
 
   <script src="js/vendor/gsap.min.js"></script>
   <script src="js/vendor/CustomEase.min.js"></script>

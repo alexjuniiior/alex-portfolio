@@ -814,6 +814,126 @@ html.cta-on-light .cta-float .button__arrow { filter: invert(1); }
   .projects__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 640px); margin-left: 0; column-gap: 32px; }
 }
 
+/* ---------- About: a panel that slides in from the right ---------- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.about-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: #000;
+  opacity: 0;               /* faded in by main.js */
+}
+.about {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;             /* above the header and the floating button */
+  width: min(720px, 100vw);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--bg);
+  color: var(--fg);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.about::-webkit-scrollbar { display: none; }
+.about[hidden], .about-backdrop[hidden] { display: none; }
+html.about-open { overflow: hidden; }   /* page behind stays put */
+
+/* "Close  Esc" pill, stays in the top-right corner while the panel scrolls */
+.about__bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  padding: 24px 24px 16px;
+  margin-bottom: -16px;
+  pointer-events: none;
+  /* text scrolling up fades out under the Close pill instead of colliding with it */
+  background: linear-gradient(var(--bg) 72%, rgba(0, 0, 0, 0));
+}
+.about__close {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 6px 6px 6px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--fg);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: transform .4s var(--ease-hover), background-color .4s var(--ease-hover);
+}
+.about__close-text { color: #030118; }
+.about__close-key { color: #605f71; }
+@media (hover: hover) and (pointer: fine) {
+  .about__close:hover { background: #fff; }
+}
+.about__close:active { transform: scale(.95); }
+.about__close:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.about__body {
+  padding: 32px 24px 44px;  /* Figma: text starts 88px from the top, pill at 24px */
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.about__intro p + p { margin-top: 1.4em; }
+.about__intro .about__reading { margin-top: 32px; color: #8b8982; }
+.about__reading em { font-style: italic; }
+
+.about__photo {
+  margin-top: 32px;
+  aspect-ratio: 672 / 637;
+}
+.about__photo img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+
+.about__block {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  column-gap: 16px;
+  margin-top: 32px;
+}
+.about__label {
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #8b8982;
+}
+.about__text p + p { margin-top: 1.4em; }
+.about__text .about__q { color: #8b8982; }
+.about__line {
+  height: 0;
+  margin: 32px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  transform-origin: 0 50%;
+}
+
+@media (max-width: 760px) {
+  .about__bar { padding: 20px 20px 16px; }
+  .about__body { padding: 28px 20px calc(40px + env(safe-area-inset-bottom, 0px)); font-size: 17px; }
+  .about__label { font-size: 17px; }
+  .about__block { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
+}
+
 /* ---------- Tablets (iPads portrait and landscape, small laptops) ---------- */
 @media (min-width: 761px) and (max-width: 1279px) {
   /* Rooms: two columns no longer fit next to the 80px names, so each row
